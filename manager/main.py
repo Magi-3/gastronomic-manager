@@ -15,3 +15,7 @@ if selected_unit == "Registrar":
   pass
 elif selected_unit == "Logar":
   pass
+
+
+def soma_dois():
+  pass

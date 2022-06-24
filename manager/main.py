@@ -39,5 +39,20 @@ while True:
     selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Sair']) 
 
 
+listar_receitas = []
 
-  #armando lindo
+def receitas():
+  nome = str(input("digite seu nome: "))
+  nomereceita = str(input("digite o nome da sua receita: "))  
+  ingre = str(input("digite os ingridientes necessários: "))
+  preparo = str(input("digite o modo de preparo: "))
+  
+  receita = {"criador":nome,
+             "nome da receita":nomereceita,
+             "ingredientes": ingre,
+             "modo de preaparo": preparo,}
+  return receita
+
+
+listar_receitas.append(receitas())          
+             

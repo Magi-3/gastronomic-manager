@@ -1,3 +1,7 @@
+import pyfiglet
+import inquirer
+from tabulate import tabulate
+
 def create_user():
   registro = str(input('Digite seu primeiro nome, login e senha (separados por vírgula): ')).strip().split(',')
   
@@ -9,11 +13,30 @@ def create_user():
 
   return usuario
 
-users = []
+def create_recipe():
+  check_login(dados)
+  author = users[0]['nome']
+  recipe_name = str(input("Digite o nome da sua receita: "))  
+  ingredients = str(input("Digite os ingredientes necessários: "))
+  preparation = str(input("Digite o modo de preparo: "))
+  
+  recipe = {
+    "autor": author,
+    "receita": recipe_name,
+    "ingredientes": ingredients,
+    "preparo": preparation
+}
+  
+  return recipe
 
-import pyfiglet
-import inquirer
-from tabulate import tabulate
+def check_login(dados):
+  if (dados[0].strip() == users[0]['login'] and dados[1].strip() == users[0]['senha']):
+    return True
+  else:
+    return False
+
+users = []
+recipes = []
 
 is_logged = False
 table = [["spam",42,"cleiton"],["eggs",451, "jose"],["bacon",0]]
@@ -30,29 +53,16 @@ while True:
       print("Registro feito com sucesso! 👍")
     elif selected_unit == "Logar":
       dados = str(input("Digite seu login e senha: (separados por vírgula): ")).strip().split(',')
-      if (dados[0].strip() == users[0]['login'] and dados[1].strip() == users[0]['senha']):
-        is_logged = True
+      is_logged = check_login(dados)
+      if is_logged:
         print("Login feito com sucesso! 👍")
+      elif not is_logged:
+        print("Login inválido! 🤔")
     print(pyfiglet.figlet_format("ATOM"))
     print(tabulate(table, headers, tablefmt="fancy_grid"))
   elif (is_logged):
     selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Sair']) 
-
-
-listar_receitas = []
-
-def receitas():
-  nome = str(input("digite seu nome: "))
-  nomereceita = str(input("digite o nome da sua receita: "))  
-  ingre = str(input("digite os ingridientes necessários: "))
-  preparo = str(input("digite o modo de preparo: "))
-  
-  receita = {"criador":nome,
-             "nome da receita":nomereceita,
-             "ingredientes": ingre,
-             "modo de preaparo": preparo,}
-  return receita
-
-
-listar_receitas.append(receitas())          
-             
+    if selected_unit == "Criar receita":
+      recipes.append(create_recipe())
+      print(recipes)
+      print("Receita criada com sucesso! 👍")    

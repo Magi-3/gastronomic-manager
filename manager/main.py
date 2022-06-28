@@ -2,7 +2,8 @@ import pyfiglet
 import inquirer
 from tabulate import tabulate
 
-table = [["spam",42,"cleiton"],["eggs",451, "jose"],["bacon",0]]
+#["spam",42,"cleiton"],["eggs",451, "jose"],["tofu",12,"maria"]
+table = []
 headers = ["Receita", "Tipo", "Criador"]
 users = []
 
@@ -36,16 +37,36 @@ def create_repice(usuarios):
     if usuario['login'] == login:
       author = usuario['nome']
   name = str(input('Digite o nome da receita: '))
+  recipe_type = str(input('Digite o tipo da receita: '))
   ingredients = str(input('Digite os ingredientes necessários: '))
   preparation = str(input('Digite o modo de preparo da receita: '))
   recipe = {
     'nome': name,
+    'type': recipe_type,
     'ingredientes': ingredients,
     'preparo': preparation,
     'autor': author
   }
+  table.append([name, recipe_type, ingredients, preparation, author])
   return recipe 
-  
+
+def create_recipe_archive():
+  recipes = open('receitas.txt', 'a')
+  for recipe in table:
+    for item in range(len(recipe)):
+      if item == len(recipe) - 1:
+        recipes.write(f'{recipe[item]}\n')
+      else:
+        recipes.write(f'{recipe[item]} - ')
+  recipes.close()
+
+def read_recipes():
+  recipes = open('receitas.txt', 'r')
+  for line in recipes:
+    line = line.replace('\n', '').split(' - ')
+    table.append([line[0], line[1], line[-1]])
+  recipes.close()
+
 def main_template():
   print(pyfiglet.figlet_format("ATOM"))
   print(tabulate(table, headers, tablefmt="fancy_grid"))
@@ -53,6 +74,7 @@ def main_template():
 
 def main():
   is_logged = False
+  read_recipes()
   while True:
     main_template()
     if(is_logged == False):
@@ -70,9 +92,13 @@ def main():
       elif selected_unit == "Sair":
         break
     elif (is_logged):
-      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Deslogar'])
+      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Criar arquivo de receitas', 'Deslogar'])
       if selected_unit == "Criar receita":
         recipe = create_repice(users)
+      elif selected_unit == "Criar arquivo de receitas":
+        print("Criando arquivo de receitas...")
+        create_recipe_archive()
+        print("Arquivo criado com sucesso! 👍")
       elif selected_unit == "Deslogar":
         is_logged = exit_user()
 

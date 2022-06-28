@@ -4,27 +4,52 @@ from tabulate import tabulate
 
 table = [["spam",42,"cleiton"],["eggs",451, "jose"],["bacon",0]]
 headers = ["Receita", "Tipo", "Criador"]
+users = []
 
 def create_user():
-  registro = str(input('Digite seu primeiro nome, login e senha (separados por vírgula): ')).strip().split(',')
-  usuario = {
-    'nome': registro[0].strip(),
-    'login': registro[1].strip(),
-    'senha': registro[2].strip()
+  name = str(input('Digite seu nome: '))
+  username = str(input('Digite o login que deseja: '))
+  password = str(input('Digite a senha que deseja: '))
+  user = {
+    'nome': name,
+    'login': username,
+    'senha': password
   }
-  return usuario
+  return user
+
+def login_user(usuarios):
+  global login
+  login = str(input('Digite seu login: '))
+  password = str(input('Digite sua senha: '))
+
+  for usuario in usuarios:
+    if usuario['login'] == login and usuario['senha'] == password:
+      return True
+  return False
 
 def exit_user():
   print('Saindo da conta...')
   return False
-  
+
+def create_repice(usuarios):
+  for usuario in usuarios:
+    if usuario['login'] == login:
+      author = usuario['nome']
+  name = str(input('Digite o nome da receita: '))
+  ingredients = str(input('Digite os ingredientes necessários: '))
+  preparation = str(input('Digite o modo de preparo da receita: '))
+  recipe = {
+    'nome': name,
+    'ingredientes': ingredients,
+    'preparo': preparation,
+    'autor': author
+  }
+  return recipe 
   
 def main_template():
   print(pyfiglet.figlet_format("ATOM"))
   print(tabulate(table, headers, tablefmt="fancy_grid"))
 
-
-users = []
 
 def main():
   is_logged = False
@@ -33,18 +58,22 @@ def main():
     if(is_logged == False):
       selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Registrar', 'Logar', 'Sair'])
       if selected_unit == "Registrar":
-        users.append(create_user())
+        usuario = create_user()
+        users.append(usuario)
         print("Registro feito com sucesso! 👍")
       elif selected_unit == "Logar":
-        dados = str(input("Digite seu login e senha: (separados por vírgula): ")).strip().split(',')
-        if (dados[0].strip() == users[0]['login'] and dados[1].strip() == users[0]['senha']):
-          is_logged = True
+        is_logged = login_user(users)
+        if is_logged == True:
           print("Login feito com sucesso! 👍")
+        else:
+          print("Login inválido! 😢")
       elif selected_unit == "Sair":
         break
     elif (is_logged):
-      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Sair'])
-      if selected_unit == "Sair":
+      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Deslogar'])
+      if selected_unit == "Criar receita":
+        recipe = create_repice(users)
+      elif selected_unit == "Deslogar":
         is_logged = exit_user()
 
 

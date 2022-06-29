@@ -1,0 +1,8 @@
+spam - 42 - cleiton
+eggs - 451 - jose
+tofu - 12 - maria
+Pao com ovo - Lanche - pao e ovo - corta o pao e coloca o ovo - Armando Vinicius
+Pao com queijo - Lanche - pao e queijo - corta o pao e coloca o queijo - Francisco Jose
+Pao com alan - Janta - pao e alan - Corta o p�o e coloca o alan - Rafael Ivo
+Pao com cellbit - Almoço - P�o e cellbit - Corta o p�o e coloca o cellbit - Armando Vinicius
+Pao com calango - Almoco - pao e calango - Corta o pao e coloca o calango - Pedro Aumerio

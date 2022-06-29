@@ -2,7 +2,6 @@ import pyfiglet
 import inquirer
 from tabulate import tabulate
 
-#["spam",42,"cleiton"],["eggs",451, "jose"],["tofu",12,"maria"]
 table = []
 headers = ["Receita", "Tipo", "Criador"]
 users = []
@@ -11,12 +10,33 @@ def create_user():
   name = str(input('Digite seu nome: '))
   username = str(input('Digite o login que deseja: '))
   password = str(input('Digite a senha que deseja: '))
+  if username in [user['login'] for user in users]:
+    return False
   user = {
     'nome': name,
     'login': username,
     'senha': password
   }
   return user
+
+def insert_user(usuario):
+  usuarios = open('manager\\users\\usuarios.txt', 'a')
+  usuarios.write(f'{usuario["nome"]} - {usuario["login"]} - {usuario["senha"]}\n')
+
+def create_user_archives():
+  usuarios = open('manager\\users\\usuarios.txt', 'a')
+  usuarios.close()
+
+def read_users():
+  usuarios = open('manager\\users\\usuarios.txt', 'r')
+  for line in usuarios:
+    line = line.replace('\n', '').split(' - ')
+    users.append({
+      'nome': line[0],
+      'login': line[1],
+      'senha': line[2]
+    })
+  usuarios.close()
 
 def login_user(usuarios):
   global login
@@ -32,7 +52,7 @@ def exit_user():
   print('Saindo da conta...')
   return False
 
-def create_repice(usuarios):
+def create_recipe(usuarios):
   for usuario in usuarios:
     if usuario['login'] == login:
       author = usuario['nome']
@@ -47,21 +67,18 @@ def create_repice(usuarios):
     'preparo': preparation,
     'autor': author
   }
-  table.append([name, recipe_type, ingredients, preparation, author])
   return recipe 
 
+def insert_recipe(recipe):
+  recipes = open('manager\\users\\receitas.txt', 'a')
+  recipes.write(f'{recipe["nome"]} - {recipe["type"]} - {recipe["ingredientes"]} - {recipe["preparo"]} - {recipe["autor"]}\n')
+
 def create_recipe_archive():
-  recipes = open('receitas.txt', 'a')
-  for recipe in table:
-    for item in range(len(recipe)):
-      if item == len(recipe) - 1:
-        recipes.write(f'{recipe[item]}\n')
-      else:
-        recipes.write(f'{recipe[item]} - ')
+  recipes = open('manager\\users\\receitas.txt', 'w')
   recipes.close()
 
 def read_recipes():
-  recipes = open('receitas.txt', 'r')
+  recipes = open('manager\\users\\receitas.txt', 'r')
   for line in recipes:
     line = line.replace('\n', '').split(' - ')
     table.append([line[0], line[1], line[-1]])
@@ -75,14 +92,19 @@ def main_template():
 def main():
   is_logged = False
   read_recipes()
+  read_users()
   while True:
     main_template()
     if(is_logged == False):
       selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Registrar', 'Logar', 'Sair'])
       if selected_unit == "Registrar":
         usuario = create_user()
-        users.append(usuario)
-        print("Registro feito com sucesso! 👍")
+        if usuario == False:
+          print("Login já existe! 😢")
+        else:
+          insert_user(usuario)
+          read_users()
+          print("Registro feito com sucesso! 👍")
       elif selected_unit == "Logar":
         is_logged = login_user(users)
         if is_logged == True:
@@ -92,13 +114,11 @@ def main():
       elif selected_unit == "Sair":
         break
     elif (is_logged):
-      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Criar arquivo de receitas', 'Deslogar'])
+      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Deslogar'])
       if selected_unit == "Criar receita":
-        recipe = create_repice(users)
-      elif selected_unit == "Criar arquivo de receitas":
-        print("Criando arquivo de receitas...")
-        create_recipe_archive()
-        print("Arquivo criado com sucesso! 👍")
+        recipe = create_recipe(users)
+        insert_recipe(recipe)
+        read_recipes()
       elif selected_unit == "Deslogar":
         is_logged = exit_user()
 

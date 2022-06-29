@@ -1,5 +1,0 @@
-spam - 42 - cleiton
-eggs - 451 - jose
-tofu - 12 - maria
-Pao com ovo - Lanche - pao e ovo - corta o pao e coloca o ovo - Armando Vinicius
-Pao com queijo - Lanche - pao e queijo - corta o pao e coloca o queijo - Francisco Jose

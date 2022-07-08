@@ -2,6 +2,7 @@
 import os
 import pyfiglet
 import inquirer
+from time import sleep
 from tabulate import tabulate
 
 # Variaveis utilizadas no programa
@@ -80,6 +81,8 @@ def exit_user():
   info_login = []
   print('Saindo...')
   print('Até mais! 👋\n')
+  sleep(1.25)
+  os.system('cls' or 'clear')
   return False
 
 # Função para criar uma receita
@@ -112,10 +115,15 @@ def create_recipe(usuarios):
 def list_recipes():
   recipes = read_recipe_db()
   table = []
+  print('Essas são as receitas disponíveis:')
   for recipe in recipes:
     recipe = eval(recipe)
     table.append([recipe['nome'], recipe['tipo'], recipe['autor']])
   print(f'{tabulate(table, headers, tablefmt="fancy_grid")}\n')
+
+def clear_terminal():
+  sleep(2)
+  os.system('cls' or 'clear')
 
 # Função principal do programa
 def main():
@@ -127,20 +135,20 @@ def main():
   while True:
     
     if not is_logged:
-      selected_unit = inquirer.list_input('Escolha uma opção: ', choices=menu_option)
+      selected_unit = inquirer.list_input('Escolha uma opção', choices=menu_option)
       
       if selected_unit == "Registrar":
         create_user()
+        clear_terminal()
 
       elif selected_unit == "Logar":
         usuarios = read_user_db()
         if usuarios == []:
           print('Não há usuários cadastrados! 🙁\n')
-          continue
+          clear_terminal()
         else:
           is_logged = login_user(usuarios)
-          if is_logged:
-            pass
+          clear_terminal()
       elif selected_unit == "Sair":
         exit_user()
         break
@@ -150,13 +158,16 @@ def main():
       
       if selected_unit == "Criar receita":
         create_recipe(read_user_db())
-      
+        clear_terminal()
       elif selected_unit == "Listar receitas":
         receitas = read_recipe_db()
         if receitas == []:
           print('Não há receitas cadastradas! 🙁\n')
+          clear_terminal()
         else:
           list_recipes()
+          input('Aperte ENTER para continuar...')
+          clear_terminal()
 
       elif selected_unit == "Deslogar":
         is_logged = exit_user()

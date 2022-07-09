@@ -1,127 +1,176 @@
+# Importação dos módulos utilizados no programa
+import os
 import pyfiglet
 import inquirer
+from time import sleep
 from tabulate import tabulate
 
+# Variaveis utilizadas no programa
 table = []
-headers = ["Receita", "Tipo", "Criador"]
-users = []
+headers = ['Receita', 'Marcador', 'Autor']
+menu_option = ['Registrar', 'Logar', 'Sair']
+logged_option = ['Criar receita', 'Listar receitas', 'Deslogar']
+info_login = []
 
+# Função para criação dos arquivos essenciais
+def start():
+  if not os.path.isfile(f'db/usuarios_db.txt'):
+    db_user = open(f'db/usuarios_db.txt', 'w')
+    db_user.close()
+  if not os.path.isfile(f'db/receitas_db.txt'):
+    db_recipe = open(f'db/receitas_db.txt', 'w')
+    db_recipe.close()
+
+# Função para ler o banco de dados de usuários
+def read_user_db():
+  db_user = open(f'db/usuarios_db.txt', 'r')
+  users = db_user.readlines()
+  db_user.close()
+  return users
+
+# Função para ler o banco de dados de receitas
+def read_recipe_db():
+  db_recipe = open(f'db/receitas_db.txt', 'r')
+  recipes = db_recipe.readlines()
+  db_recipe.close()
+  return recipes
+
+# Função para criar um usuário
 def create_user():
-  name = str(input('Digite seu nome: '))
-  username = str(input('Digite o login que deseja: '))
-  password = str(input('Digite a senha que deseja: '))
-  if username in [user['login'] for user in users]:
-    return False
-  user = {
+  name = str(input('\nDigite seu NOME: '))
+  username = str(input('Digite o LOGIN que deseja: '))
+  
+  users = read_user_db()
+  for user in users:
+    user = eval(user)
+    if user['login'] == username:
+      print('\nLogin já existe! Tente novamente. 🙁\n')
+      return
+  
+  password = str(input('Digite a SENHA que deseja: '))
+
+  user_model = {
     'nome': name,
     'login': username,
     'senha': password
   }
-  return user
 
-def insert_user(usuario):
-  usuarios = open('manager\\users\\usuarios.txt', 'a')
-  usuarios.write(f'{usuario["nome"]} - {usuario["login"]} - {usuario["senha"]}\n')
+  db_user = open(f'db/usuarios_db.txt', 'a')
+  db_user.write(str(user_model) + '\n')
+  db_user.close()
 
-def create_user_archives():
-  usuarios = open('manager\\users\\usuarios.txt', 'a')
-  usuarios.close()
+  print('\nUsuário criado com sucesso! 🎉\n')
 
-def read_users():
-  usuarios = open('manager\\users\\usuarios.txt', 'r')
-  for line in usuarios:
-    line = line.replace('\n', '').split(' - ')
-    users.append({
-      'nome': line[0],
-      'login': line[1],
-      'senha': line[2]
-    })
-  usuarios.close()
-
+# Função para fazer o login do usuário
 def login_user(usuarios):
-  global login
-  login = str(input('Digite seu login: '))
-  password = str(input('Digite sua senha: '))
-
+  login = str(input('Digite seu LOGIN: '))
+  password = str(input('Digite sua SENHA: '))
+  
   for usuario in usuarios:
+    usuario = eval(usuario)
     if usuario['login'] == login and usuario['senha'] == password:
+      print(f'\nBem-vinde, {usuario["nome"]}. 🎉\n')
+      info_login.append(usuario['login'])
       return True
+  
+  print(f'\nLogin inválido! Tente novamente. 😢\n')
   return False
 
+# Função para deslogar do sistema
 def exit_user():
-  print('Saindo da conta...')
+  info_login = []
+  print('Saindo...')
+  print('Até mais! 👋\n')
+  sleep(1.25)
+  os.system('cls' or 'clear')
   return False
 
+# Função para criar uma receita
 def create_recipe(usuarios):
   for usuario in usuarios:
-    if usuario['login'] == login:
+    usuario = eval(usuario)
+    if usuario['login'] == info_login[0]:
       author = usuario['nome']
-  name = str(input('Digite o nome da receita: '))
-  recipe_type = str(input('Digite o tipo da receita: '))
-  ingredients = str(input('Digite os ingredientes necessários: '))
-  preparation = str(input('Digite o modo de preparo da receita: '))
+  
+  name = str(input('Digite o NOME da receita: '))
+  recipe_type = str(input('Defina o TIPO de receita: '))
+  ingredients = str(input('Liste os INGREDIENTES necessários: '))
+  preparation = str(input('Digite o MODO DE PREPARO da receita: '))
+  
   recipe = {
     'nome': name,
-    'type': recipe_type,
+    'tipo': recipe_type,
     'ingredientes': ingredients,
     'preparo': preparation,
     'autor': author
   }
-  return recipe 
 
-def insert_recipe(recipe):
-  recipes = open('manager\\users\\receitas.txt', 'a')
-  recipes.write(f'{recipe["nome"]} - {recipe["type"]} - {recipe["ingredientes"]} - {recipe["preparo"]} - {recipe["autor"]}\n')
+  db_recipe = open(f'db/receitas_db.txt', 'a')
+  db_recipe.write(str(recipe) + '\n')
+  db_recipe.close()
 
-def create_recipe_archive():
-  recipes = open('manager\\users\\receitas.txt', 'w')
-  recipes.close()
+  print('\nReceita criada com sucesso! 🎉\n')
 
-def read_recipes():
-  recipes = open('manager\\users\\receitas.txt', 'r')
-  for line in recipes:
-    line = line.replace('\n', '').split(' - ')
-    table.append([line[0], line[1], line[-1]])
-  recipes.close()
+# Função para listar as receitas
+def list_recipes():
+  recipes = read_recipe_db()
+  table = []
+  print('Essas são as receitas disponíveis:')
+  for recipe in recipes:
+    recipe = eval(recipe)
+    table.append([recipe['nome'], recipe['tipo'], recipe['autor']])
+  print(f'{tabulate(table, headers, tablefmt="fancy_grid")}\n')
 
-def main_template():
-  print(pyfiglet.figlet_format("ATOM"))
-  print(tabulate(table, headers, tablefmt="fancy_grid"))
+def clear_terminal():
+  sleep(2)
+  os.system('cls' or 'clear')
 
-
+# Função principal do programa
 def main():
   is_logged = False
-  read_recipes()
-  read_users()
+
+  start()
+  print(pyfiglet.figlet_format("ATOM"))
+
   while True:
-    main_template()
-    if(is_logged == False):
-      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Registrar', 'Logar', 'Sair'])
+    
+    if not is_logged:
+      selected_unit = inquirer.list_input('Escolha uma opção', choices=menu_option)
+      
       if selected_unit == "Registrar":
-        usuario = create_user()
-        if usuario == False:
-          print("Login já existe! 😢")
-        else:
-          insert_user(usuario)
-          read_users()
-          print("Registro feito com sucesso! 👍")
+        create_user()
+        clear_terminal()
+
       elif selected_unit == "Logar":
-        is_logged = login_user(users)
-        if is_logged == True:
-          print("Login feito com sucesso! 👍")
+        usuarios = read_user_db()
+        if usuarios == []:
+          print('Não há usuários cadastrados! 🙁\n')
+          clear_terminal()
         else:
-          print("Login inválido! 😢")
+          is_logged = login_user(usuarios)
+          clear_terminal()
       elif selected_unit == "Sair":
+        exit_user()
         break
+
     elif (is_logged):
-      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=['Criar receita', 'Listar receitas', 'Deslogar'])
+      selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=logged_option)
+      
       if selected_unit == "Criar receita":
-        recipe = create_recipe(users)
-        insert_recipe(recipe)
-        read_recipes()
+        create_recipe(read_user_db())
+        clear_terminal()
+      elif selected_unit == "Listar receitas":
+        receitas = read_recipe_db()
+        if receitas == []:
+          print('Não há receitas cadastradas! 🙁\n')
+          clear_terminal()
+        else:
+          list_recipes()
+          input('Aperte ENTER para continuar...')
+          clear_terminal()
+
       elif selected_unit == "Deslogar":
         is_logged = exit_user()
-
 
 if __name__ == "__main__":
   main()

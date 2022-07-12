@@ -69,8 +69,8 @@ def login_user(usuarios):
   for usuario in usuarios:
     usuario = eval(usuario)
     if usuario['login'] == login and usuario['senha'] == password:
-      print(f'\nBem-vinde, {usuario["nome"]}. 🎉\n')
-      info_login.append(usuario['login'])
+      print(f'\nBem-vindo(a), {usuario["nome"]}. 🎉\n')
+      info_login.append(usuario['nome'])
       return True
   
   print(f'\nLogin inválido! Tente novamente. 😢\n')
@@ -78,7 +78,6 @@ def login_user(usuarios):
 
 # Função para deslogar do sistema
 def exit_user():
-  info_login = []
   print('Saindo...')
   print('Até mais! 👋\n')
   sleep(1.25)
@@ -86,11 +85,8 @@ def exit_user():
   return False
 
 # Função para criar uma receita
-def create_recipe(usuarios):
-  for usuario in usuarios:
-    usuario = eval(usuario)
-    if usuario['login'] == info_login[0]:
-      author = usuario['nome']
+def create_recipe():
+  author = info_login[0]
   
   name = str(input('Digite o NOME da receita: '))
   recipe_type = str(input('Defina o TIPO de receita: '))
@@ -121,6 +117,7 @@ def list_recipes():
     table.append([recipe['nome'], recipe['tipo'], recipe['autor']])
   print(f'{tabulate(table, headers, tablefmt="fancy_grid")}\n')
 
+# Função para limpar o terminal
 def clear_terminal():
   sleep(2)
   os.system('cls' or 'clear')
@@ -157,7 +154,7 @@ def main():
       selected_unit = inquirer.list_input("Escolha uma opção abaixo", choices=logged_option)
       
       if selected_unit == "Criar receita":
-        create_recipe(read_user_db())
+        create_recipe()
         clear_terminal()
       elif selected_unit == "Listar receitas":
         receitas = read_recipe_db()
@@ -170,6 +167,7 @@ def main():
           clear_terminal()
 
       elif selected_unit == "Deslogar":
+        info_login.pop()
         is_logged = exit_user()
 
 if __name__ == "__main__":

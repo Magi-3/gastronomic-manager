@@ -9,28 +9,28 @@ from tabulate import tabulate
 table = []
 headers = ['Receita', 'Marcador', 'Autor']
 menu_option = ['Registrar', 'Logar', 'Sair']
-logged_option = ['Criar receita', 'Listar receitas', 'Deslogar']
+logged_option = ['Criar receita', 'Listar todas as receitas', 'Buscar receita', 'Deslogar']
 info_login = []
 
 # Função para criação dos arquivos essenciais
 def start():
-  if not os.path.isfile(f'db/usuarios_db.txt'):
-    db_user = open(f'db/usuarios_db.txt', 'w')
+  if not os.path.isfile('db/usuarios_db.txt'):
+    db_user = open('db/usuarios_db.txt', 'w')
     db_user.close()
-  if not os.path.isfile(f'db/receitas_db.txt'):
-    db_recipe = open(f'db/receitas_db.txt', 'w')
+  if not os.path.isfile('db/receitas_db.txt'):
+    db_recipe = open('db/receitas_db.txt', 'w')
     db_recipe.close()
 
 # Função para ler o banco de dados de usuários
 def read_user_db():
-  db_user = open(f'db/usuarios_db.txt', 'r')
+  db_user = open('db/usuarios_db.txt', 'r')
   users = db_user.readlines()
   db_user.close()
   return users
 
 # Função para ler o banco de dados de receitas
 def read_recipe_db():
-  db_recipe = open(f'db/receitas_db.txt', 'r')
+  db_recipe = open('db/receitas_db.txt', 'r')
   recipes = db_recipe.readlines()
   db_recipe.close()
   return recipes
@@ -60,7 +60,7 @@ def create_user():
       print('\nPreencha todos os campos! 🙁\n')
       return
 
-  db_user = open(f'db/usuarios_db.txt', 'a')
+  db_user = open('db/usuarios_db.txt', 'a')
   db_user.write(str(user_model) + '\n')
   db_user.close()
 
@@ -111,7 +111,7 @@ def create_recipe():
       print('\nPreencha todos os campos! 🙁\n')
       return
 
-  db_recipe = open(f'db/receitas_db.txt', 'a')
+  db_recipe = open('db/receitas_db.txt', 'a')
   db_recipe.write(str(recipe) + '\n')
   db_recipe.close()
 
@@ -126,6 +126,23 @@ def list_recipes():
     recipe = eval(recipe)
     table.append([recipe['nome'], recipe['tipo'], recipe['autor']])
   print(f'{tabulate(table, headers, tablefmt="fancy_grid")}\n')
+
+# Função para exibir uma receita completa
+def search_recipe():
+  nome = str(input('Digite o NOME EXATO da receita que quer procurar: '))
+  recipes = read_recipe_db()
+  print('\nProcurando receita...')
+  sleep(1.25)
+  for recipe in recipes:
+    recipe = eval(recipe)
+    if recipe['nome'] == nome:
+      print(f'\n\033[1mReceita encontrada:\033[m {recipe["nome"]}')
+      print(f'\033[1mTipo:\033[m {recipe["tipo"]}')
+      print(f'\033[1mAutor:\033[m {recipe["autor"]}')
+      print(f'\033[1mIngredientes:\033[m {recipe["ingredientes"]}')
+      print(f'\033[1mPreparo:\033[m {recipe["preparo"]}\n')
+      return
+  print('\nReceita não encontrada! Verifique o nome digitado e tente novamente. 😢\n')
 
 # Função para limpar o terminal
 def clear_terminal():
@@ -166,7 +183,7 @@ def main():
       if selected_unit == "Criar receita":
         create_recipe()
         clear_terminal()
-      elif selected_unit == "Listar receitas":
+      elif selected_unit == "Listar todas as receitas":
         receitas = read_recipe_db()
         if receitas == []:
           print('Não há receitas cadastradas! 🙁\n')
@@ -175,7 +192,10 @@ def main():
           list_recipes()
           input('Aperte ENTER para continuar...')
           clear_terminal()
-
+      elif selected_unit == "Buscar receita":
+        search_recipe()
+        input('Aperte ENTER para continuar...')
+        clear_terminal()
       elif selected_unit == "Deslogar":
         info_login.pop()
         is_logged = exit_user()

@@ -101,6 +101,11 @@ def create_recipe():
     'autor': author
   }
 
+  for key in recipe:
+    if recipe[key] == '':
+      print('\nPreencha todos os campos! 🙁\n')
+      return
+
   db_recipe = open(f'db/receitas_db.txt', 'a')
   db_recipe.write(str(recipe) + '\n')
   db_recipe.close()

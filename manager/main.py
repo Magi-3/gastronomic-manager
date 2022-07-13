@@ -55,6 +55,11 @@ def create_user():
     'senha': password
   }
 
+  for key in user_model:
+    if user_model[key] == '':
+      print('\nPreencha todos os campos! 🙁\n')
+      return
+
   db_user = open(f'db/usuarios_db.txt', 'a')
   db_user.write(str(user_model) + '\n')
   db_user.close()

@@ -98,7 +98,7 @@ def create_recipe():
   ingredients = str(input('Liste os INGREDIENTES necessários: '))
   preparation = str(input('Digite o MODO DE PREPARO da receita: '))
   
-  recipe = {
+  recipe_model = {
     'nome': name,
     'tipo': recipe_type,
     'ingredientes': ingredients,
@@ -106,13 +106,13 @@ def create_recipe():
     'autor': author
   }
 
-  for key in recipe:
-    if recipe[key] == '':
+  for key in recipe_model:
+    if recipe_model[key] == '':
       print('\nPreencha todos os campos! 🙁\n')
       return
 
   db_recipe = open('db/receitas_db.txt', 'a')
-  db_recipe.write(str(recipe) + '\n')
+  db_recipe.write(str(recipe_model) + '\n')
   db_recipe.close()
 
   print('\nReceita criada com sucesso! 🎉\n')
